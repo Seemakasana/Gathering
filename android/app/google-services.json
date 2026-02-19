@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "237672451396",
+    "project_id": "gathering-49e97",
+    "storage_bucket": "gathering-49e97.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237672451396:android:e361ea10ce7179cb4b5b11",
+        "android_client_info": {
+          "package_name": "com.example.gathering"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237672451396-gi8fvbcgkfdaa4qadgilteo1nvdfm77g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gathering",
+            "certificate_hash": "96de98706808757efc96ea645897f3d396f11274"
+          }
+        },
+        {
+          "client_id": "237672451396-dpstm1i4pg6ibp935sra59vdk183rarl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNW1SWknb9kjAY0wzgyYi7Xx-X6ZUzzV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237672451396-dpstm1i4pg6ibp935sra59vdk183rarl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
