@@ -16,10 +16,10 @@ class AppColors {
   static const Color accent = Color(0xFF8B5CF6);
   static const Color accentDark = Color(0xFF7C3AED);
   static const Color accentLight = Color(0xFFA78BFA);
-  
+
   // Alternate Accent: Electric Blue
   static const Color electricBlue = Color(0xFF38BDF8);
-  
+
   // Success / Live: Neon Green
   static const Color success = Color(0xFF22C55E);
   static const Color successDark = Color(0xFF16A34A);
@@ -46,20 +46,25 @@ class AppColors {
   
   // Gradient Colors
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [accent, accentLight],
+    colors: [Color(0xFF7C3AED),
+      Color(0xFF6366F1),
+      Color(0xFF3B82F6),],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient ButtonGradient = LinearGradient(
-    colors: [Color(0xFF0061ff),Color(0xFF60efff)],
+    colors: [Color(0xFF1A1A23),
+      Color(0xFF0F0F14),],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   
   static const LinearGradient secondaryGradient = LinearGradient(
-    colors: [electricBlue, accent],
+    colors: [Color(0xFF7C3AED), // accentDark
+      Color(0xFF9333EA),
+      Color(0xFFA855F7),],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
             background: AppColors.background,
             surface: AppColors.surface,
           ),
+
           useMaterial3: true,
           scaffoldBackgroundColor: AppColors.background,
           // ✅ Cursor + selection colors

@@ -14,43 +14,13 @@ class EventsPage extends StatefulWidget {
 }
 
 class _EventsPageState extends State<EventsPage> {
-  final List<Map<String, dynamic>> _peopleYouMet = [
-    {
-      'name': 'John Doe',
-      'avatar': 'J',
-      'status': 'Online',
-      'lastEvent': 'Neon Night Party',
-      'lastMessage': 'Hey! Are you going to the concert?',
-      'time': '2m ago',
-      'unread': 2,
-    },
-    {
-      'name': 'Sarah Smith',
-      'avatar': 'S',
-      'status': 'Online',
-      'lastEvent': 'Rock Mania Concert',
-      'lastMessage': 'Great party last night!',
-      'time': '1h ago',
-      'unread': 0,
-    },
-    {
-      'name': 'Mike Johnson',
-      'avatar': 'M',
-      'status': 'Offline',
-      'lastEvent': 'DJ Night',
-      'lastMessage': 'See you at the event!',
-      'time': '3h ago',
-      'unread': 1,
-    },
-    {
-      'name': 'Emma Wilson',
-      'avatar': 'E',
-      'status': 'Online',
-      'lastEvent': 'Beach Party',
-      'lastMessage': 'Thanks for the recommendation!',
-      'time': '5h ago',
-      'unread': 0,
-    },
+  String _selectedCategory = 'Posted';
+
+  final List<String> _categories = [
+    'Posted',
+    'Attended',
+    'Wishlist',
+    'Registered'
   ];
 
   final List<Map<String, dynamic>> _groups = [
@@ -110,86 +80,70 @@ class _EventsPageState extends State<EventsPage> {
         body: Column(
           children: [
 
-            // Container(
-            //   height: size.width * 0.13,
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: 2,
-            //     vertical: 2,
-            //   ),
-            //   margin: EdgeInsets.symmetric(
-            //     horizontal: 5,
-            //     vertical: 5,
-            //   ),
-            //   decoration: BoxDecoration(
-            //     color: AppColors.surface,
-            //     borderRadius: BorderRadius.circular(12),
-            //     boxShadow: const [
-            //       BoxShadow(
-            //         blurRadius: 6,
-            //         color: Colors.black12,
-            //       )
-            //     ],
-            //   ),
-            //   child: const TextField(
-            //     decoration: InputDecoration(
-            //       hintText: 'Search people, group...',
-            //       prefixIcon: Icon(Icons.search),
-            //       border: InputBorder.none,
-            //     ),
-            //   ),
-            // ),
+
 
             _buildContainer(size),
 
-            // Tabs
+            // category Filter
             Container(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildTabButton(
-                      size,
-                      'Posted',
-                      0,
-                      _selectedTab == 0,
+              margin: const EdgeInsets.all( 10, ),
+              height: size.height/20,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _categories.length,
+                itemBuilder: (context, index) {
+                  final cat = _categories[index];
+                  final selected = cat == _selectedCategory;
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = cat;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 10, ),
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 18),
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? Colors.deepPurple
+                            :AppColors.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: const [
+                          BoxShadow(
+                            blurRadius: 4,
+                            color: Colors.black12,
+                          )
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        cat,
+                        style: TextStyle(
+                          fontSize: size.width * 0.04,
+                          color: selected
+                              ? Colors.white
+                              : AppColors.textSecondary
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(width: size.width * 0.04),
-                  Expanded(
-                    child: _buildTabButton(
-                      size,
-                      'Attended',
-                      1,
-                      _selectedTab == 1,
-                    ),
-                  ),
-                  SizedBox(width: size.width * 0.04),
-                  Expanded(
-                    child: _buildTabButton(
-                      size,
-                      'Wishlist',
-                      2,
-                      _selectedTab == 2,
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
 
+
             Expanded(
-              child: _selectedTab == 0
+              child: _selectedCategory == _categories[0]
                   ? _buildPosted(size)
-                  : _selectedTab == 1? _buildGroupsList(size): _buildPosted(size),
+                  : _selectedCategory == _categories[1]
+                  ? _buildGroupsList(size)
+                  : _selectedCategory == _categories[2]
+                  ? _buildGroupsList(size)
+                  : _selectedCategory == _categories[3]
+                  ? _buildGroupsList(size)
+                  : _buildPosted(size),
             )
 
             // List
@@ -209,7 +163,8 @@ class _EventsPageState extends State<EventsPage> {
           ),
           padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
-            gradient: AppColors.ButtonGradient,
+            color:  AppColors.accent,
+            // gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(size.width * 0.04),
             boxShadow: [
               BoxShadow(
@@ -374,11 +329,14 @@ class _EventsPageState extends State<EventsPage> {
     return  BlocBuilder<EventBloc, EventState>(
       builder: (context, state) {
         if (state is EventLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(
+            color: AppColors.accent,
+          ));
         }
 
         if (state is EventsLoaded) {
           return RefreshIndicator(
+            color: AppColors.accent,
             onRefresh: () async {
               context.read<EventBloc>().add(RefreshMyEvents());
             },

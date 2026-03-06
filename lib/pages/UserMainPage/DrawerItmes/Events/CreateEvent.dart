@@ -54,6 +54,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
       initialDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.accent, // header & selected date
+              onPrimary: AppColors.surface,
+                surface: AppColors.surface,
+              onSurface: AppColors.textPrimary,
+            ),
+            dialogBackgroundColor: AppColors.accent,
+          ),
+          child: child!,
+        );
+      },
     );
     if (date == null) return;
 
@@ -61,6 +75,21 @@ class _CreateEventPageState extends State<CreateEventPage> {
       context: context,
       initialTime: TimeOfDay.now(),
       initialEntryMode: TimePickerEntryMode.input, // 👈 keyboard mode
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.accent, // clock & header
+              secondary: AppColors.accent,// clock color
+              onPrimary: AppColors.surface,
+              surface: AppColors.surface,
+              onSurface: AppColors.textPrimary,
+            ),
+            dialogBackgroundColor: AppColors.accent,
+          ),
+          child: child!,
+        );
+      },
     );
     if (time == null) return;
 
@@ -192,10 +221,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return TextField(
       controller: controller,
       maxLines: maxLines,
+      style: TextStyle(
+        color: AppColors.textPrimary
+      ),
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
         fillColor: AppColors.surface,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: AppColors.accent, // color when focused
+            width: 2,
+          ),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
@@ -219,12 +258,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
             width: double.infinity,
             decoration: BoxDecoration(
               color: AppColors.surface,
+              border: Border.all(
+                color: AppColors.textLightDark,   // Border color
+                width: 1,            // Border width
+              ),
               borderRadius: BorderRadius.circular(20),
             ),
             child: image != null
                 ? ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.file(image, fit: BoxFit.cover),
+              child: Image.file(image, fit: BoxFit.fill),
             )
                 : const Center(
               child: Icon(Icons.add_a_photo,
@@ -247,6 +290,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.textLightDark,
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
@@ -257,6 +304,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
               _eventDate == null
                   ? "Pick Event Date & Time"
                   : _formatDateTime(_eventDate!),
+              style: TextStyle(
+                color: _eventDate == null ?AppColors.textLight: AppColors.textPrimary
+              ),
             ),
           ],
         ),
