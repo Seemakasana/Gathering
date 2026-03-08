@@ -19,7 +19,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final _descriptionController = TextEditingController();
   final _addressController = TextEditingController();
   final _formLinkController = TextEditingController();
-  final _participantLimitController = TextEditingController();
+  int _participantLimit = 1;
+
+  final TextEditingController _participantLimitController =
+  TextEditingController(text: "1");
+
+  final FixedExtentScrollController _wheelController =
+  FixedExtentScrollController(initialItem: 0);
 
   DateTime? _eventDate;
 
@@ -33,7 +39,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   String _selectedGender = "any"; // any | male | female
 
   bool _isLimited = false;
-  int _participantLimit = 50;
 
   double? _latitude;
   double? _longitude;
@@ -57,7 +62,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: ColorScheme.dark(
               primary: AppColors.accent, // header & selected date
               onPrimary: AppColors.surface,
                 surface: AppColors.surface,
@@ -78,7 +83,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: ColorScheme.dark(
               primary: AppColors.accent, // clock & header
               secondary: AppColors.accent,// clock color
               onPrimary: AppColors.surface,
@@ -156,9 +161,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 const SizedBox(height: 20),
 
                 registrationSection(),
-                const SizedBox(height: 20),
-
-                groupSection(),
                 const SizedBox(height: 20),
 
                 genderSection(),
@@ -321,7 +323,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
         buildTextField(_addressController, "Event Address"),
         SwitchListTile(
           value: _isAddressPublic,
-          title: const Text("Make Address Public"),
+          activeColor: AppColors.accentLight,
+          title:  Text("Make Address Public",
+            style: TextStyle(
+                color: AppColors.textLight
+            ),),
           onChanged: (val) =>
               setState(() => _isAddressPublic = val),
         ),
@@ -335,20 +341,61 @@ class _CreateEventPageState extends State<CreateEventPage> {
       children: [
         DropdownButtonFormField<String>(
           value: _registrationType,
-          items: const [
-            DropdownMenuItem(value: "none", child: Text("No Registration")),
-            DropdownMenuItem(value: "form", child: Text("Form Only")),
-            DropdownMenuItem(value: "group", child: Text("Group Only")),
-            DropdownMenuItem(value: "both", child: Text("Form + Group")),
+          items:  [
+            DropdownMenuItem(
+                value: "none",
+                child: Text(
+                    "No Registration",
+                style: TextStyle(
+                  color: AppColors.textLight
+                ),)),
+            DropdownMenuItem(
+                value: "form",
+                child: Text(
+                    "Form Only",
+                    style: TextStyle(
+                        color: AppColors.textLight
+                    ))),
+            DropdownMenuItem(
+                value: "group",
+                child: Text(
+                    "Group Only",
+                    style: TextStyle(
+                        color: AppColors.textLight
+                    ))),
+            DropdownMenuItem(
+                value: "both",
+                child: Text(
+                    "Form + Group",
+                    style: TextStyle(
+                        color: AppColors.textLight
+                    )
+                )),
           ],
           onChanged: (val) =>
               setState(() => _registrationType = val!),
           decoration:
           const InputDecoration(labelText: "Registration Type"),
         ),
-        if (_registrationType == "form" ||
-            _registrationType == "both")
-          buildTextField(_formLinkController, "Enter Form Link"),
+         (_registrationType == "form" )
+         ? Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+              child: buildTextField(_formLinkController, "Enter Form Link"))
+        : (_registrationType == "group" )
+    ? groupSection()
+        :(_registrationType == "both" )
+    ? Column(
+      children: [
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: buildTextField(_formLinkController, "Enter Form Link")),
+        const SizedBox(height: 20),
+        groupSection(),
+      ],
+    ):Container(),
+    const SizedBox(height: 20),
+
+
       ],
     );
   }
@@ -358,14 +405,22 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Column(
       children: [
         SwitchListTile(
-          title: const Text("Create Event Group"),
+          activeColor: AppColors.accentLight,
+          title:  Text("Create Event Group",
+              style: TextStyle(
+                  color: AppColors.textLight
+              )),
           value: _createGroup,
           onChanged: (val) =>
               setState(() => _createGroup = val),
         ),
         if (_createGroup)
           SwitchListTile(
-            title: const Text("Group Public"),
+        activeColor: AppColors.accentLight,
+            title:  Text("Group Public",
+                style: TextStyle(
+                    color: AppColors.textLight
+                )),
             value: _isGroupPublic,
             onChanged: (val) =>
                 setState(() => _isGroupPublic = val),
@@ -379,9 +434,27 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return DropdownButtonFormField<String>(
       value: _selectedGender,
       items: const [
-        DropdownMenuItem(value: "any", child: Text("Any")),
-        DropdownMenuItem(value: "male", child: Text("Male Only")),
-        DropdownMenuItem(value: "female", child: Text("Female Only")),
+        DropdownMenuItem(
+            value: "any", child: Text(
+            "Any",
+            style: TextStyle(
+                color: AppColors.textLight
+            )
+        )),
+        DropdownMenuItem(
+            value: "male",
+            child: Text(
+                "Male Only",
+                style: TextStyle(
+                    color: AppColors.textLight
+                ))),
+        DropdownMenuItem(
+            value: "female",
+            child: Text(
+                "Female Only",
+                style: TextStyle(
+                    color: AppColors.textLight
+                ))),
       ],
       onChanged: (val) =>
           setState(() => _selectedGender = val!),
@@ -395,35 +468,100 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Column(
       children: [
         SwitchListTile(
-          title: const Text("Limit Participants"),
+    activeColor: AppColors.accentLight,
+          title:  Text("Limit Participants",
+              style: TextStyle(
+                  color: AppColors.textLight
+              )),
           value: _isLimited,
           onChanged: (val) =>
               setState(() => _isLimited = val),
         ),
         if (_isLimited)
-          SizedBox(
-            height: 120,
-            child: ListWheelScrollView.useDelegate(
-              itemExtent: 40,
-              onSelectedItemChanged: (index) {
-                setState(() {
-                  _participantLimit = index + 1;
-                  _participantLimitController.text =
-                      _participantLimit.toString();
-                });
-              },
-              childDelegate:
-              ListWheelChildBuilderDelegate(
-                builder: (context, index) {
-                  return Center(
-                      child: Text("${index + 1}",
-                          style:
-                          const TextStyle(fontSize: 20)));
-                },
-                childCount: 500,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  "Participants Count",
+                  style: TextStyle(color: AppColors.textLight),
+                ),
               ),
-            ),
-          ),
+
+              SizedBox(
+                height: 150,
+                width: 120,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+
+                    /// Wheel Picker
+                    ListWheelScrollView.useDelegate(
+                      controller: _wheelController,
+                      itemExtent: 40,
+                      physics: const FixedExtentScrollPhysics(),
+                      onSelectedItemChanged: (index) {
+                        setState(() {
+                          _participantLimit = index + 1;
+                          _participantLimitController.text =
+                              _participantLimit.toString();
+                        });
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        builder: (context, index) {
+                          return Center(
+                            child: Text(
+                              "${index + 1}",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.textLight,
+                              ),
+                            ),
+                          );
+                        },
+                        childCount: 10000,
+                      ),
+                    ),
+
+                    /// Center Editable Field
+                    Container(
+                      height: 40,
+                      width: 70,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        // color: Colors.white,
+                        // border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: TextField(
+                        controller: _participantLimitController,
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(
+                          color: AppColors.textPrimary
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        onChanged: (value) {
+                          int? number = int.tryParse(value);
+
+                          if (number != null && number > 0 && number <= 10000) {
+                            _wheelController.animateToItem(
+                              number - 1,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
       ],
     );
   }
@@ -435,13 +573,33 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: SizedBox(
+      child: Container(
         height: 56,
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accent.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
           child: isLoading
-              ? const CircularProgressIndicator()
-              : const Text("Create Event"),
+              ?  CircularProgressIndicator(color: AppColors.accent,)
+              :  Text("Create Event",
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
         ),
       ),
     );
